@@ -1,0 +1,15 @@
+target/
+build/
+out/
+.git/
+.gitignore
+.dockerignore
+Dockerfile*
+*.log*
+.env*
+coverage/
+node_modules/
+specs/
+.specify/
+.github/
+.vscode/

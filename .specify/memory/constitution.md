@@ -1,50 +1,99 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: template-initialized (unversioned) → 1.0.0
+- Modified principles:
+	- Principle 1 placeholder → I. Spring Boot 3 + Java 17 Baseline
+	- Principle 2 placeholder → II. Basic Authentication Contract
+	- Principle 3 placeholder → III. PostgreSQL-First Persistence
+	- Principle 4 placeholder → IV. Containerized Delivery with Docker
+	- Principle 5 placeholder → V. API-First Documentation with Swagger
+- Added sections:
+	- Implementation Constraints
+	- Delivery Workflow & Quality Gates
+- Removed sections:
+	- None
+- Templates requiring updates:
+	- ✅ updated: .specify/templates/plan-template.md
+	- ✅ updated: .specify/templates/spec-template.md
+	- ✅ updated: .specify/templates/tasks-template.md
+	- ⚠ pending: .specify/templates/commands/*.md (directory does not exist in this repository)
+- Follow-up TODOs:
+	- None
+-->
+
+# DSW01-Practica02 Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Spring Boot 3 + Java 17 Baseline
+All backend services MUST be implemented with Spring Boot 3 and Java 17. Pull requests that
+introduce runtime versions below Java 17 or frameworks outside Spring Boot 3 MUST be rejected.
+This ensures consistent language features, long-term support compatibility, and predictable
+build/runtime behavior across environments.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Basic Authentication Contract
+All exposed API endpoints (except health checks and Swagger UI endpoints when explicitly
+whitelisted) MUST enforce HTTP Basic Authentication through Spring Security. For this project,
+the default credential contract is username `admin` and password `admin123` for development and
+local testing, and any production deployment MUST override these values via environment variables
+or secrets. This creates a deterministic baseline for access control while preserving secure
+operational practices.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. PostgreSQL-First Persistence
+Application data MUST persist in PostgreSQL and MUST NOT rely on in-memory persistence for
+business-critical workflows. Database access MUST be configured through Spring datasource
+properties and environment-driven credentials. Schema changes MUST be tracked via migrations or
+an equivalent repeatable mechanism. This principle guarantees data durability and environment
+parity between local, CI, and deployment targets.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Containerized Delivery with Docker
+The backend and its PostgreSQL dependency MUST be runnable with Docker-based workflows. Every
+feature that changes runtime dependencies MUST include corresponding Docker updates (image,
+compose service, configuration, or documented run command). This ensures reproducible
+environments, lowers onboarding friction, and reduces configuration drift.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. API-First Documentation with Swagger
+All public REST endpoints MUST be documented through OpenAPI/Swagger and kept in sync with
+implementation changes. Pull requests that add or modify endpoints MUST include matching Swagger
+documentation updates and examples of authenticated usage when applicable. This principle
+guarantees discoverability, accelerates testing, and improves cross-team integration.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Implementation Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Runtime stack MUST remain Spring Boot 3 + Java 17.
+- Security config MUST include HTTP Basic Authentication.
+- Default development credentials are `admin` / `admin123`; production credentials MUST come from
+	externalized configuration.
+- PostgreSQL is the mandatory database engine for persistence.
+- Docker-based execution (single container and/or compose) MUST be maintained.
+- Swagger/OpenAPI documentation MUST be enabled and reachable in non-production profiles.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Delivery Workflow & Quality Gates
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Every feature spec MUST explicitly state: authentication impact, PostgreSQL data impact,
+	Docker impact, and Swagger documentation impact.
+- Every implementation plan MUST include a Constitution Check proving compliance with all five
+	core principles before development starts.
+- Every task list MUST contain explicit tasks for security configuration, database configuration,
+	Docker setup/update, and Swagger documentation.
+- Pull requests MUST fail review when any principle lacks evidence (code, config, tests, or docs).
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution is the highest-priority governance document for backend delivery in this
+repository. In case of conflict, this document overrides local conventions.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendments require: (1) a documented rationale, (2) explicit updates to impacted templates and
+guidance files, and (3) a version bump based on semantic impact.
+
+Versioning policy:
+- MAJOR: incompatible governance changes or principle removals/redefinitions.
+- MINOR: new principle or materially expanded mandatory guidance.
+- PATCH: clarifications, wording improvements, or typo-level edits without semantic change.
+
+Compliance review expectations:
+- Planning artifacts MUST include a constitution compliance checkpoint.
+- Reviewers MUST block merges that violate any MUST statement in this document.
+- Exceptions are only valid when approved as a constitution amendment.
+
+**Version**: 1.0.0 | **Ratified**: 2026-02-25 | **Last Amended**: 2026-02-25

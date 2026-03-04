@@ -31,7 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] Confirms Spring Boot 3 and Java 17 as implementation baseline
+- [ ] Confirms HTTP Basic Auth impact and credential strategy (dev vs production)
+- [ ] Confirms PostgreSQL persistence impact (schema/data changes documented)
+- [ ] Confirms Docker runtime impact (container/compose updates identified)
+- [ ] Confirms Swagger/OpenAPI impact for every API change
 
 ## Project Structure
 
