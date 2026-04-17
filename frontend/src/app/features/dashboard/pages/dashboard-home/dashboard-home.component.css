@@ -1,0 +1,16 @@
+.dashboard-home {
+  background: #ffffff;
+  border: 1px solid #dde6f1;
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.dashboard-home h1 {
+  margin: 0;
+  color: #1d3858;
+}
+
+.dashboard-home p {
+  margin: 0.6rem 0 0;
+  color: #4a607d;
+}

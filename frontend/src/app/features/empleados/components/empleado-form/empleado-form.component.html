@@ -1,0 +1,68 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="empleado-form" novalidate>
+  <label>
+    Nombre
+    <input type="text" formControlName="nombre" />
+  </label>
+  <small *ngIf="form.controls.nombre.touched && form.controls.nombre.invalid">
+    Nombre obligatorio (max 100).
+  </small>
+  <small *ngIf="fieldErrors?.['nombre']">{{ fieldErrors?.['nombre'] }}</small>
+
+  <label>
+    Direccion
+    <input type="text" formControlName="direccion" />
+  </label>
+  <small *ngIf="form.controls.direccion.touched && form.controls.direccion.invalid">
+    Direccion obligatoria (max 100).
+  </small>
+  <small *ngIf="fieldErrors?.['direccion']">{{ fieldErrors?.['direccion'] }}</small>
+
+  <label>
+    Telefono
+    <input type="text" formControlName="telefono" />
+  </label>
+  <small *ngIf="form.controls.telefono.touched && form.controls.telefono.invalid">
+    Telefono obligatorio (max 100).
+  </small>
+  <small *ngIf="fieldErrors?.['telefono']">{{ fieldErrors?.['telefono'] }}</small>
+
+  <label>
+    Departamento clave
+    <select
+      *ngIf="departamentoOptions.length > 0; else departamentoClaveManual"
+      formControlName="departamentoClave"
+    >
+      <option value="" disabled>Selecciona un departamento</option>
+      <option
+        *ngFor="let departamento of departamentoOptions"
+        [value]="departamento.clave"
+      >
+        {{ departamento.clave }} - {{ departamento.nombre }}
+      </option>
+    </select>
+  </label>
+  <ng-template #departamentoClaveManual>
+    <input type="text" formControlName="departamentoClave" placeholder="D-0001" />
+  </ng-template>
+  <small
+    *ngIf="
+      form.controls.departamentoClave.touched &&
+      form.controls.departamentoClave.invalid
+    "
+  >
+    Departamento clave obligatoria con formato D-0001.
+  </small>
+  <small *ngIf="fieldErrors?.['departamentoClave']">
+    {{ fieldErrors?.['departamentoClave'] }}
+  </small>
+
+  <label *ngIf="mode === 'edit'">
+    Version
+    <input type="number" formControlName="version" min="0" />
+  </label>
+  <small *ngIf="fieldErrors?.['version']">{{ fieldErrors?.['version'] }}</small>
+
+  <button type="submit" [disabled]="loading">
+    {{ loading ? 'Procesando...' : submitLabel }}
+  </button>
+</form>

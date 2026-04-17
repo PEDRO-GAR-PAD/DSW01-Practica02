@@ -1,0 +1,9 @@
+<section class="dashboard-home">
+  <h1>Panel principal</h1>
+  <p *ngIf="authSessionService.isAdmin$ | async; else empleadoHome">
+    Sesion master iniciada. Usa el menu para gestionar empleados y credenciales.
+  </p>
+  <ng-template #empleadoHome>
+    <p>Sesion iniciada correctamente. Este es tu menu basico.</p>
+  </ng-template>
+</section>

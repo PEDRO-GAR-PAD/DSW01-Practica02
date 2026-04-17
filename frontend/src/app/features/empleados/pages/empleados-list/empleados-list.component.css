@@ -1,0 +1,125 @@
+.empleados-list {
+  background: #fff;
+  border: 1px solid #dce6f2;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+h1 {
+  margin: 0;
+  color: #1f3654;
+}
+
+header p {
+  margin: 0.3rem 0 0;
+  color: #4d6280;
+}
+
+.btn-primary {
+  background: #1f5ea9;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.feedback {
+  margin-top: 0.8rem;
+  border-radius: 10px;
+  padding: 0.65rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.feedback button {
+  border: 0;
+  border-radius: 8px;
+  background: #264f82;
+  color: #fff;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.feedback--error {
+  background: #ffe8e5;
+  color: #8e2518;
+}
+
+.feedback--warning {
+  background: #fff3dd;
+  color: #7c5310;
+}
+
+.feedback--info {
+  background: #e8f3ff;
+  color: #124074;
+}
+
+.feedback--success {
+  background: #e7f7ec;
+  color: #156337;
+}
+
+.table-wrapper {
+  margin-top: 0.8rem;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 780px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #dbe4f0;
+  padding: 0.55rem;
+  text-align: left;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.actions a,
+.actions button {
+  border: 0;
+  border-radius: 6px;
+  background: #e7eef8;
+  color: #1f426d;
+  padding: 0.35rem 0.5rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.loading {
+  margin-top: 1rem;
+  color: #385675;
+}
+
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.pagination button {
+  border: 0;
+  border-radius: 6px;
+  background: #dce8f7;
+  color: #19385f;
+  padding: 0.4rem 0.55rem;
+}

@@ -1,0 +1,54 @@
+{
+  "properties": [
+    {
+      "name": "app.auth.bootstrap.username",
+      "type": "java.lang.String",
+      "description": "Bootstrap admin username used for credential administration."
+    },
+    {
+      "name": "app.auth.bootstrap.password",
+      "type": "java.lang.String",
+      "description": "Bootstrap admin password used for credential administration."
+    },
+    {
+      "name": "app.auth.bootstrap.roles",
+      "type": "java.lang.String",
+      "description": "Comma-separated roles for bootstrap admin account."
+    },
+    {
+      "name": "app.auth.bootstrap.aliases",
+      "type": "java.lang.String",
+      "description": "Comma-separated alias usernames that authenticate as master/bootstrap admin."
+    },
+    {
+      "name": "app.auth.password.min-length",
+      "type": "java.lang.Integer",
+      "description": "Minimum accepted password length for employee credentials."
+    },
+    {
+      "name": "app.auth.password.max-length",
+      "type": "java.lang.Integer",
+      "description": "Maximum accepted password length for employee credentials."
+    },
+    {
+      "name": "app.auth.lockout.max-failed-attempts",
+      "type": "java.lang.Integer",
+      "description": "Number of failed attempts before temporary lockout."
+    },
+    {
+      "name": "app.auth.lockout.window-minutes",
+      "type": "java.lang.Integer",
+      "description": "Time window in minutes used to count failed attempts."
+    },
+    {
+      "name": "app.auth.lockout.duration-minutes",
+      "type": "java.lang.Integer",
+      "description": "Temporary lockout duration in minutes after reaching the failed-attempt threshold."
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Comma-separated allowed origins for CORS (for example Angular dev server URLs)."
+    }
+  ]
+}

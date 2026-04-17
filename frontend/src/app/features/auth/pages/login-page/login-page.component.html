@@ -1,0 +1,57 @@
+<section class="login-page">
+  <article class="login-card">
+    <header>
+      <h1>Iniciar sesion</h1>
+      <p>Accede con tu usuario o email y password.</p>
+    </header>
+
+    <p
+      *ngIf="feedback"
+      class="feedback"
+      [class.feedback--error]="feedback.type === 'error'"
+      [class.feedback--warning]="feedback.type === 'warning'"
+      [class.feedback--info]="feedback.type === 'info'"
+      [class.feedback--success]="feedback.type === 'success'"
+    >
+      {{ feedback.message }}
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <label>
+        Usuario o email
+        <input type="text" formControlName="email" autocomplete="username" />
+      </label>
+      <small *ngIf="form.controls.email.touched && form.controls.email.invalid">
+        El usuario o email es obligatorio.
+      </small>
+
+      <label>
+        Password
+        <div class="password-input-wrap">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="toggle-password-btn"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Ocultar password' : 'Mostrar password'"
+          >
+            {{ showPassword ? 'Ocultar' : 'Ver' }}
+          </button>
+        </div>
+      </label>
+      <small *ngIf="form.controls.password.touched && form.controls.password.invalid">
+        El password es obligatorio.
+      </small>
+
+      <button type="submit" [disabled]="submitStatus === 'loading'">
+        {{ submitStatus === 'loading' ? 'Validando...' : 'Entrar' }}
+      </button>
+    </form>
+
+    <a routerLink="/" class="muted-link">Volver al inicio</a>
+  </article>
+</section>

@@ -1,0 +1,226 @@
+openapi: 3.0.3
+info:
+  title: Departamentos API (v1)
+  version: 1.0.0
+  description: Contrato CRUD de departamentos con autenticacion basica y rutas versionadas.
+servers:
+  - url: http://localhost:8080
+security:
+  - basicAuth: []
+
+paths:
+  /api/v1/departamentos:
+    get:
+      summary: Listar departamentos
+      operationId: listarDepartamentos
+      tags: [Departamentos]
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Número de página (base 0)
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Lista paginada de departamentos (5 por página); fuera de rango devuelve `content` vacío
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoPageResponse'
+              examples:
+                paginaVacia:
+                  value:
+                    content: []
+                    page: 99
+                    size: 5
+                    totalElements: 1
+                    totalPages: 1
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Crear departamento
+      operationId: crearDepartamento
+      tags: [Departamentos]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartamentoCreateRequest'
+      responses:
+        '201':
+          description: Departamento creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/ConflictCapacity'
+
+  /api/v1/departamentos/{clave}:
+    parameters:
+      - name: clave
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^D-[0-9]{4}$'
+    get:
+      summary: Obtener departamento por clave
+      operationId: obtenerDepartamento
+      tags: [Departamentos]
+      responses:
+        '200':
+          description: Departamento encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Actualizar departamento
+      operationId: actualizarDepartamento
+      tags: [Departamentos]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartamentoUpdateRequest'
+      responses:
+        '200':
+          description: Departamento actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartamentoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Eliminar departamento
+      operationId: eliminarDepartamento
+      tags: [Departamentos]
+      responses:
+        '204':
+          description: Departamento eliminado
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/ConflictReferenced'
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    DepartamentoCreateRequest:
+      type: object
+      required: [nombre]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+    DepartamentoUpdateRequest:
+      type: object
+      required: [nombre]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+    DepartamentoResponse:
+      type: object
+      required: [clave, nombre]
+      properties:
+        clave:
+          type: string
+          pattern: '^D-[0-9]{4}$'
+        nombre:
+          type: string
+          maxLength: 100
+    DepartamentoPageResponse:
+      type: object
+      required: [content, page, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/DepartamentoResponse'
+        page:
+          type: integer
+          minimum: 0
+        size:
+          type: integer
+          enum: [5]
+        totalElements:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+    ApiError:
+      type: object
+      required: [timestamp, status, error, message]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+  responses:
+    BadRequest:
+      description: Solicitud inválida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unauthorized:
+      description: Credenciales inválidas o ausentes
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    ConflictCapacity:
+      description: Conflicto de capacidad al generar clave de departamento (`D-9999`)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    ConflictReferenced:
+      description: Conflicto por intento de eliminar un departamento referenciado por empleados
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
