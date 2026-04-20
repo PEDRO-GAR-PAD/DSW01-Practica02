@@ -60,14 +60,32 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Detect Cypress specs
+        id: cypress-specs
+        run: |
+          specs_count=$(find frontend -type f \( -name "*.cy.ts" -o -name "*.cy.js" -o -name "*.cy.tsx" -o -name "*.cy.jsx" \) | wc -l)
+          if [ "$specs_count" -gt 0 ]; then
+            echo "has_specs=true" >> "$GITHUB_OUTPUT"
+            echo "Found $specs_count Cypress spec file(s)."
+          else
+            echo "has_specs=false" >> "$GITHUB_OUTPUT"
+            echo "No Cypress specs found. E2E job will be skipped without failing CI."
+          fi
+
       - name: Install Cypress (runtime)
+        if: steps.cypress-specs.outputs.has_specs == 'true'
         working-directory: frontend
         run: npm install --no-save cypress start-server-and-test
 
       - name: Run Cypress E2E
+        if: steps.cypress-specs.outputs.has_specs == 'true'
         uses: cypress-io/github-action@v6
         with:
           working-directory: frontend
           start: npm run start -- --host 0.0.0.0 --port 4200
           wait-on: 'http://127.0.0.1:4200'
           command: npx cypress run
+
+      - name: Cypress skipped notice
+        if: steps.cypress-specs.outputs.has_specs != 'true'
+        run: echo "Cypress E2E skipped because no *.cy.* files were found in frontend/."
