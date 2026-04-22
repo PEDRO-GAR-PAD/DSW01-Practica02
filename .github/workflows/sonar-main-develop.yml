@@ -59,25 +59,16 @@ jobs:
       - name: Run tests and Sonar analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
-          if [ -z "$SONAR_HOST_URL" ]; then
-            echo "Missing SONAR_HOST_URL secret. Example: https://sonarcloud.io or your SonarQube URL."
+          if [ -z "$SONAR_ORGANIZATION" ]; then
+            echo "Missing SONAR_ORGANIZATION secret for SonarCloud."
             exit 1
           fi
 
-          if [ -n "$SONAR_ORGANIZATION" ]; then
-            mvn -B verify sonar:sonar \
-              -Dsonar.token=${SONAR_TOKEN} \
-              -Dsonar.host.url=${SONAR_HOST_URL} \
-              -Dsonar.organization=${SONAR_ORGANIZATION} \
-              -Dsonar.projectKey=dsw01-practica02 \
-              -Dsonar.projectName=DSW01-Practica02
-          else
-            mvn -B verify sonar:sonar \
-              -Dsonar.token=${SONAR_TOKEN} \
-              -Dsonar.host.url=${SONAR_HOST_URL} \
-              -Dsonar.projectKey=dsw01-practica02 \
-              -Dsonar.projectName=DSW01-Practica02
-          fi
+          mvn -B verify sonar:sonar \
+            -Dsonar.token=${SONAR_TOKEN} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.organization=${SONAR_ORGANIZATION} \
+            -Dsonar.projectKey=PEDRO-GAR-PAD_DSW01-Practica02 \
+            -Dsonar.projectName=DSW01-Practica02
