@@ -4,16 +4,16 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
-  workflow_run:
-    workflows: ["02 - SonarQube Analysis"]
-    branches: [main, develop]
-    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
 
 jobs:
   cypress-e2e:
     name: Cypress E2E Tests
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout
@@ -71,3 +71,20 @@ jobs:
           name: cypress-screenshots
           path: frontend/cypress/screenshots/
           retention-days: 5
+
+  trigger-dockerhub:
+    name: Trigger Docker Hub workflow
+    runs-on: ubuntu-latest
+    needs: cypress-e2e
+
+    steps:
+      - name: Dispatch Docker Hub workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: '04-DockerHub-main-develop.yml',
+              ref: context.ref.replace('refs/heads/', '')
+            })
