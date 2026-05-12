@@ -4,16 +4,16 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  actions: write
+  workflow_run:
+    workflows: ["01 - Unit Tests"]
+    branches: [main, develop]
+    types: [completed]
 
 jobs:
   sonar:
     name: SonarQube Code Quality Analysis
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout
@@ -77,20 +77,3 @@ jobs:
             -Dsonar.projectKey=PEDRO-GAR-PAD_DSW01-Practica02 \
             -Dsonar.projectName=DSW01-Practica02 \
             --no-transfer-progress
-
-  trigger-cypress:
-    name: Trigger Cypress workflow
-    runs-on: ubuntu-latest
-    needs: sonar
-
-    steps:
-      - name: Dispatch Cypress workflow
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: '03-Cypress-main-develop.yml',
-              ref: context.ref.replace('refs/heads/', '')
-            })
