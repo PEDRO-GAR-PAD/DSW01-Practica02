@@ -1,0 +1,75 @@
+name: 02 - SonarQube Analysis
+
+on:
+  workflow_run:
+    workflows: ["01 - Unit Tests"]
+    branches: [main, develop]
+    types: [completed]
+
+jobs:
+  sonar:
+    name: SonarQube Code Quality Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Detect Angular unit test specs
+        id: unit-specs
+        run: |
+          specs_count=$(find frontend/src -type f -name "*.spec.ts" | wc -l)
+          if [ "$specs_count" -gt 0 ]; then
+            echo "has_specs=true" >> "$GITHUB_OUTPUT"
+            echo "Found $specs_count Angular spec file(s)."
+          else
+            echo "has_specs=false" >> "$GITHUB_OUTPUT"
+            echo "No Angular spec files found. Frontend unit tests will be skipped without failing CI."
+          fi
+
+      - name: Run frontend unit tests with coverage
+        if: steps.unit-specs.outputs.has_specs == 'true'
+        working-directory: frontend
+        run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      - name: Frontend unit tests skipped notice
+        if: steps.unit-specs.outputs.has_specs != 'true'
+        run: echo "Angular unit tests skipped because no *.spec.ts files were found in frontend/src."
+
+      - name: Run SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+        run: |
+          if [ -z "$SONAR_ORGANIZATION" ]; then
+            echo "Missing SONAR_ORGANIZATION secret for SonarCloud."
+            exit 1
+          fi
+
+          mvn -B verify sonar:sonar \
+            -Dsonar.token=${SONAR_TOKEN} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.organization=${SONAR_ORGANIZATION} \
+            -Dsonar.projectKey=PEDRO-GAR-PAD_DSW01-Practica02 \
+            -Dsonar.projectName=DSW01-Practica02 \
+            --no-transfer-progress

@@ -1,4 +1,4 @@
-name: CI - Sonar Analysis
+name: 01 - Unit Tests
 
 on:
   push:
@@ -7,15 +7,13 @@ on:
     branches: [main, develop]
 
 jobs:
-  sonar:
-    name: SonarQube Scan
+  unit-tests:
+    name: Unit Tests (Backend + Frontend)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -23,6 +21,9 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+
+      - name: Run backend unit tests
+        run: mvn -B test --no-transfer-progress
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -55,20 +56,3 @@ jobs:
       - name: Frontend unit tests skipped notice
         if: steps.unit-specs.outputs.has_specs != 'true'
         run: echo "Angular unit tests skipped because no *.spec.ts files were found in frontend/src."
-
-      - name: Run tests and Sonar analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
-        run: |
-          if [ -z "$SONAR_ORGANIZATION" ]; then
-            echo "Missing SONAR_ORGANIZATION secret for SonarCloud."
-            exit 1
-          fi
-
-          mvn -B verify sonar:sonar \
-            -Dsonar.token=${SONAR_TOKEN} \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.organization=${SONAR_ORGANIZATION} \
-            -Dsonar.projectKey=PEDRO-GAR-PAD_DSW01-Practica02 \
-            -Dsonar.projectName=DSW01-Practica02
