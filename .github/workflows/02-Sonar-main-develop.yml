@@ -1,5 +1,8 @@
 name: 02 - SonarQube Analysis
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   workflow_run:
     workflows: ["01 - Unit Tests"]
@@ -10,6 +13,7 @@ jobs:
   sonar:
     name: SonarQube Code Quality Analysis
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout
