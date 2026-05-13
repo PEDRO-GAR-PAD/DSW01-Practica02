@@ -1,20 +1,19 @@
-name: 03 - Cypress E2E Tests
+name: 03-Cypress-main-develop
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  actions: write
+  contents: read
+
 on:
-  workflow_run:
-    workflows: ["02-Sonar-main-develop"]
-    types:
-      - completed
-    branches: [main, develop]
+  workflow_dispatch:
 
 jobs:
   cypress-e2e:
     name: Cypress E2E Tests
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout
@@ -72,3 +71,14 @@ jobs:
           name: cypress-screenshots
           path: frontend/cypress/screenshots/
           retention-days: 5
+
+      - name: Trigger Docker workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: '04-DockerHub-main-develop.yml',
+              ref: context.ref.replace('refs/heads/', '')
+            })

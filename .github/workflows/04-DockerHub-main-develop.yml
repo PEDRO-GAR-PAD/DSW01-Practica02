@@ -3,18 +3,17 @@ name: 04-DockerHub-main-develop
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  actions: write
+  contents: read
+
 on:
-  workflow_run:
-    workflows: ["03-Cypress-main-develop"]
-    types:
-      - completed
-    branches: [main, develop]
+  workflow_dispatch:
 
 jobs:
   build-and-push:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout
