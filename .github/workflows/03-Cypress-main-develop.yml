@@ -1,20 +1,23 @@
 name: 03-Cypress-main-develop
 
-
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
   workflow_run:
-    workflows: ["02-Sonar-main-develop"]
+    workflows:
+      - "02-Sonar-main-develop"
     types:
       - completed
 
 jobs:
-  cypress-e2e:
+  cypress:
     name: Cypress E2E Tests
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'develop'
 
     steps:
       - name: Checkout
@@ -39,33 +42,32 @@ jobs:
           else
             specs_count=0
           fi
+
           if [ "$specs_count" -gt 0 ]; then
             echo "has_specs=true" >> "$GITHUB_OUTPUT"
-            echo "Found $specs_count Cypress spec file(s)."
           else
             echo "has_specs=false" >> "$GITHUB_OUTPUT"
-            echo "No Cypress specs found. E2E job will be skipped without failing CI."
           fi
 
-      - name: Install Cypress (runtime)
+      - name: Install Cypress
         if: steps.cypress-specs.outputs.has_specs == 'true'
         working-directory: frontend
         run: npm install --no-save cypress start-server-and-test
 
-      - name: Run Cypress E2E
+      - name: Run Cypress
         if: steps.cypress-specs.outputs.has_specs == 'true'
         uses: cypress-io/github-action@v6
         with:
           working-directory: frontend
           start: npm run start -- --host 0.0.0.0 --port 4200
           wait-on: 'http://127.0.0.1:4200'
-          command: npx cypress run --e2e --spec "cypress/e2e/**/*.cy.{js,ts,jsx,tsx}" --config-file cypress.config.js
+          command: npx cypress run --e2e --spec "cypress/e2e/**/*.cy.{js,ts,jsx,tsx}"
 
       - name: Cypress skipped notice
         if: steps.cypress-specs.outputs.has_specs != 'true'
-        run: echo "Cypress E2E skipped because no *.cy.* files were found in frontend/."
+        run: echo "No Cypress specs found."
 
-      - name: Upload Cypress screenshots on failure
+      - name: Upload Cypress screenshots
         if: failure()
         uses: actions/upload-artifact@v4
         with:

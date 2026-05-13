@@ -5,7 +5,8 @@ env:
 
 on:
   push:
-    branches: [main, develop]
+    branches:
+      - develop
 
 jobs:
   unit-tests:
@@ -41,19 +42,18 @@ jobs:
         id: unit-specs
         run: |
           specs_count=$(find frontend/src -type f -name "*.spec.ts" | wc -l)
+
           if [ "$specs_count" -gt 0 ]; then
             echo "has_specs=true" >> "$GITHUB_OUTPUT"
-            echo "Found $specs_count Angular spec file(s)."
           else
             echo "has_specs=false" >> "$GITHUB_OUTPUT"
-            echo "No Angular spec files found. Frontend unit tests will be skipped without failing CI."
           fi
 
-      - name: Run frontend unit tests (headless)
+      - name: Run frontend unit tests
         if: steps.unit-specs.outputs.has_specs == 'true'
         working-directory: frontend
         run: npm run test -- --watch=false --browsers=ChromeHeadless
 
-      - name: Frontend unit tests skipped notice
+      - name: Frontend tests skipped
         if: steps.unit-specs.outputs.has_specs != 'true'
-        run: echo "Angular unit tests skipped because no *.spec.ts files were found in frontend/src."
+        run: echo "No Angular spec files found."

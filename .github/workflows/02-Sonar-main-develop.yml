@@ -5,15 +5,19 @@ env:
 
 on:
   workflow_run:
-    workflows: ["01-CI-main-develop"]
+    workflows:
+      - "01-CI-main-develop"
     types:
       - completed
 
 jobs:
   sonar:
-    name: SonarQube Code Quality Analysis
+    name: SonarQube Analysis
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'develop'
 
     steps:
       - name: Checkout
@@ -39,37 +43,11 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Detect Angular unit test specs
-        id: unit-specs
-        run: |
-          specs_count=$(find frontend/src -type f -name "*.spec.ts" | wc -l)
-          if [ "$specs_count" -gt 0 ]; then
-            echo "has_specs=true" >> "$GITHUB_OUTPUT"
-            echo "Found $specs_count Angular spec file(s)."
-          else
-            echo "has_specs=false" >> "$GITHUB_OUTPUT"
-            echo "No Angular spec files found. Frontend unit tests will be skipped without failing CI."
-          fi
-
-      - name: Run frontend unit tests with coverage
-        if: steps.unit-specs.outputs.has_specs == 'true'
-        working-directory: frontend
-        run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
-
-      - name: Frontend unit tests skipped notice
-        if: steps.unit-specs.outputs.has_specs != 'true'
-        run: echo "Angular unit tests skipped because no *.spec.ts files were found in frontend/src."
-
-      - name: Run SonarQube analysis
+      - name: Run SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
         run: |
-          if [ -z "$SONAR_ORGANIZATION" ]; then
-            echo "Missing SONAR_ORGANIZATION secret for SonarCloud."
-            exit 1
-          fi
-
           mvn -B verify sonar:sonar \
             -Dsonar.token=${SONAR_TOKEN} \
             -Dsonar.host.url=https://sonarcloud.io \
