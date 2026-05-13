@@ -1,11 +1,11 @@
-name: 04 - Build & Push to Docker Hub
+name: 04-DockerHub-main-develop
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
   workflow_run:
-    workflows: ["03 - Cypress E2E Tests"]
+    workflows: ["03-Cypress-main-develop"]
     types:
       - completed
     branches: [main, develop]

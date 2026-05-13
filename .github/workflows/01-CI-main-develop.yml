@@ -1,4 +1,4 @@
-name: 01 - Unit Tests
+name: 01-CI-main-develop
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
