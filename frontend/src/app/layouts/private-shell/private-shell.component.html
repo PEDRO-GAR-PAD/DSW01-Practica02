@@ -1,0 +1,28 @@
+<div class="private-shell">
+  <header class="topbar">
+    <div>
+      <h1>Empleados Admin</h1>
+      <p *ngIf="session$ | async as session">{{ session.displayName }} · {{ session.principalEmail }}</p>
+    </div>
+
+    <button type="button" (click)="logout()">Cerrar sesion</button>
+  </header>
+
+  <nav class="menu">
+    <a routerLink="/app/dashboard" routerLinkActive="is-active">Inicio</a>
+    <a *ngIf="isAdmin$ | async" routerLink="/app/empleados" routerLinkActive="is-active">
+      Empleados
+    </a>
+    <a
+      *ngIf="isAdmin$ | async"
+      routerLink="/app/departamentos"
+      routerLinkActive="is-active"
+    >
+      Departamentos
+    </a>
+  </nav>
+
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</div>

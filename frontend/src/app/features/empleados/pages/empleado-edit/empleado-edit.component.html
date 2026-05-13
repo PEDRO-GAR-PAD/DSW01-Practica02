@@ -1,0 +1,27 @@
+<section class="empleado-edit">
+  <header>
+    <h1>Editar empleado</h1>
+    <a routerLink="/app/empleados">Volver al listado</a>
+  </header>
+
+  <p
+    *ngIf="feedback"
+    class="feedback"
+    [class.feedback--error]="feedback.type === 'error'"
+    [class.feedback--warning]="feedback.type === 'warning'"
+    [class.feedback--info]="feedback.type === 'info'"
+    [class.feedback--success]="feedback.type === 'success'"
+  >
+    {{ feedback.message }}
+  </p>
+
+  <app-empleado-form
+    mode="edit"
+    [loading]="loading"
+    [submitLabel]="'Guardar cambios'"
+    [initialValue]="formState.draft"
+    [departamentoOptions]="departamentoOptions"
+    [fieldErrors]="feedback?.fieldErrors || null"
+    (submitted)="submit($event)"
+  ></app-empleado-form>
+</section>

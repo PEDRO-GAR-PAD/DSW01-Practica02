@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: Empleado Auth API (v1)
+  version: 1.0.0
+  description: Contrato para autenticacion por empleado y administracion de credenciales.
+servers:
+  - url: http://localhost:8080
+security:
+  - basicAuth: []
+
+paths:
+  /api/v1/auth/empleado/me:
+    get:
+      summary: Validar credenciales del empleado autenticado
+      operationId: authEmpleadoMe
+      tags: [AuthEmpleado]
+      responses:
+        '200':
+          description: Empleado autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoAuthMeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/empleados/{clave}/credenciales:
+    parameters:
+      - name: clave
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^E-[0-9]{4,}$'
+    post:
+      summary: Crear credenciales para un empleado
+      operationId: crearCredencialesEmpleado
+      tags: [CredencialesEmpleado]
+      responses:
+        '201':
+          description: Credenciales creadas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredencialEmpleadoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredencialEmpleadoCreateRequest'
+    put:
+      summary: Actualizar usuario, email y/o contrasena de un empleado
+      operationId: actualizarCredencialesEmpleado
+      tags: [CredencialesEmpleado]
+      responses:
+        '200':
+          description: Credenciales actualizadas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredencialEmpleadoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredencialEmpleadoUpdateRequest'
+    get:
+      summary: Consultar estado de credenciales de un empleado
+      operationId: obtenerCredencialesEmpleado
+      tags: [CredencialesEmpleado]
+      responses:
+        '200':
+          description: Estado de credenciales
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredencialEmpleadoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/empleados/{clave}/credenciales/estado:
+    parameters:
+      - name: clave
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^E-[0-9]{4,}$'
+    patch:
+      summary: Activar o desactivar credenciales de un empleado
+      operationId: cambiarEstadoCredencialesEmpleado
+      tags: [CredencialesEmpleado]
+      responses:
+        '200':
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredencialEmpleadoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredencialEmpleadoEstadoRequest'
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    EmpleadoAuthMeResponse:
+      type: object
+      required: [empleadoClave, username, nombre, authStatus]
+      properties:
+        empleadoClave:
+          type: string
+          description: Clave de empleado autenticado o valor MASTER para el usuario master.
+        username:
+          type: string
+        nombre:
+          type: string
+        authStatus:
+          type: string
+          enum: [AUTHENTICATED]
+        roles:
+          type: array
+          items:
+            type: string
+
+    CredencialEmpleadoCreateRequest:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 60
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: Debe ser unico global entre todas las credenciales de empleados.
+        password:
+          type: string
+          minLength: 12
+          maxLength: 128
+
+    CredencialEmpleadoUpdateRequest:
+      type: object
+      required: [version]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 60
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: Si se envia, debe ser unico global entre todas las credenciales.
+        password:
+          type: string
+          minLength: 12
+          maxLength: 128
+        version:
+          type: integer
+          minimum: 0
+      additionalProperties: false
+
+    CredencialEmpleadoEstadoRequest:
+      type: object
+      required: [activa, version]
+      properties:
+        activa:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0
+
+    CredencialEmpleadoResponse:
+      type: object
+      required:
+        [empleadoClave, username, email, activa, intentosFallidos, passwordUpdatedAt, updatedAt, version]
+      properties:
+        empleadoClave:
+          type: string
+          pattern: '^E-[0-9]{4,}$'
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        activa:
+          type: boolean
+        intentosFallidos:
+          type: integer
+          minimum: 0
+        bloqueadaHasta:
+          type: string
+          format: date-time
+          nullable: true
+        passwordUpdatedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        version:
+          type: integer
+          minimum: 0
+
+    ApiError:
+      type: object
+      required: [timestamp, status, error, message]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+
+  responses:
+    BadRequest:
+      description: Solicitud invalida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unauthorized:
+      description: Credenciales invalidas, ausentes o cuenta temporalmente bloqueada
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Forbidden:
+      description: Operacion no autorizada para el rol autenticado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFound:
+      description: Empleado o credenciales no encontradas
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Conflict:
+      description: Conflicto de unicidad (username/email) o estado/version de recurso
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'

@@ -1,0 +1,75 @@
+<section class="empleados-list">
+  <header>
+    <div>
+      <h1>Empleados</h1>
+      <p>Total: {{ totalElements }}</p>
+    </div>
+    <a routerLink="/app/empleados/nuevo" class="btn-primary">Nuevo empleado</a>
+  </header>
+
+  <p
+    *ngIf="feedback"
+    class="feedback"
+    [class.feedback--error]="feedback.type === 'error'"
+    [class.feedback--warning]="feedback.type === 'warning'"
+    [class.feedback--info]="feedback.type === 'info'"
+    [class.feedback--success]="feedback.type === 'success'"
+  >
+    {{ feedback.message }}
+    <button *ngIf="feedback.retryable" type="button" (click)="retryLoad()">
+      Reintentar
+    </button>
+  </p>
+
+  <div class="table-wrapper" *ngIf="!loading; else loadingTpl">
+    <table>
+      <thead>
+        <tr>
+          <th>Clave</th>
+          <th>Nombre</th>
+          <th>Direccion</th>
+          <th>Telefono</th>
+          <th>Departamento</th>
+          <th>Version</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let empleado of empleados">
+          <td>{{ empleado.clave }}</td>
+          <td>{{ empleado.nombre }}</td>
+          <td>{{ empleado.direccion }}</td>
+          <td>{{ empleado.telefono }}</td>
+          <td>{{ empleado.departamentoClave }}</td>
+          <td>{{ empleado.version }}</td>
+          <td class="actions">
+            <a [routerLink]="['/app/empleados', empleado.clave, 'editar']">Editar</a>
+            <button type="button" (click)="openDeleteDialog(empleado)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #loadingTpl>
+    <p class="loading">Cargando empleados...</p>
+  </ng-template>
+
+  <footer class="pagination">
+    <button type="button" (click)="loadPage(page - 1)" [disabled]="!canGoPrev()">
+      Anterior
+    </button>
+    <span>Pagina {{ page + 1 }} / {{ totalPages || 1 }}</span>
+    <button type="button" (click)="loadPage(page + 1)" [disabled]="!canGoNext()">
+      Siguiente
+    </button>
+  </footer>
+
+  <app-empleado-delete-dialog
+    [visible]="!!deleteTarget"
+    [empleadoNombre]="deleteTarget?.nombre || ''"
+    [loading]="deleteLoading"
+    (cancel)="closeDeleteDialog()"
+    (confirm)="confirmDelete()"
+  ></app-empleado-delete-dialog>
+</section>

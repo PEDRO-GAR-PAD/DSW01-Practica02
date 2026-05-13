@@ -1,0 +1,18 @@
+<section *ngIf="visible" class="overlay">
+  <article class="dialog">
+    <h2>Eliminar empleado</h2>
+    <p>
+      Vas a eliminar definitivamente a <strong>{{ empleadoNombre }}</strong>.
+      Esta accion no se puede deshacer.
+    </p>
+
+    <footer>
+      <button type="button" class="btn-secondary" [disabled]="loading" (click)="cancel.emit()">
+        Cancelar
+      </button>
+      <button type="button" class="btn-danger" [disabled]="loading" (click)="confirm.emit()">
+        {{ loading ? 'Eliminando...' : 'Eliminar' }}
+      </button>
+    </footer>
+  </article>
+</section>

@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: Frontend Empleados Login Contract
+  version: 1.0.0
+  description: >-
+    Contrato consumido por el frontend para login por principal (`username` o `email`) y CRUD de empleados.
+    El login usa HTTP Basic por principal (`principal:password`); la UI construye el header Authorization.
+    Permisos de administracion se derivan de roles/permisos retornados por `/api/v1/auth/empleado/me`.
+servers:
+  - url: http://localhost:8080
+security:
+  - basicAuth: []
+
+paths:
+  /api/v1/auth/empleado/me:
+    get:
+      summary: Validar credenciales y obtener perfil autenticado
+      operationId: validarSesionEmpleado
+      tags: [Auth]
+      responses:
+        '200':
+          description: Sesion valida con identidad y permisos de UI
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoAuthMeResponse'
+        '400':
+          description: Sesion autenticada sin perfil de empleado disponible
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/empleados:
+    get:
+      summary: Listar empleados paginados
+      operationId: listarEmpleados
+      tags: [Empleados]
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Lista paginada de empleados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoPageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      summary: Crear empleado
+      operationId: crearEmpleado
+      tags: [Empleados]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoCreateRequest'
+      responses:
+        '201':
+          description: Empleado creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /api/v1/empleados/{clave}:
+    parameters:
+      - name: clave
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^E-[0-9]{4,}$'
+    get:
+      summary: Obtener empleado por clave
+      operationId: obtenerEmpleado
+      tags: [Empleados]
+      responses:
+        '200':
+          description: Empleado encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Actualizar empleado
+      operationId: actualizarEmpleado
+      tags: [Empleados]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmpleadoUpdateRequest'
+      responses:
+        '200':
+          description: Empleado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmpleadoResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    delete:
+      summary: Eliminar empleado definitivamente
+      operationId: eliminarEmpleado
+      tags: [Empleados]
+      responses:
+        '204':
+          description: Empleado eliminado definitivamente
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          description: Empleado no existe (frontend lo trata como no-op informativo y refresca listado)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    EmpleadoAuthMeResponse:
+      type: object
+      required: [empleadoClave, username, nombre, authStatus]
+      properties:
+        empleadoClave:
+          type: string
+          description: Clave de empleado (`E-xxxx`) o `MASTER` para sesion bootstrap administrativa.
+        username:
+          type: string
+        nombre:
+          type: string
+        authStatus:
+          type: string
+          enum: [AUTHENTICATED]
+        roles:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: >-
+            Roles/permisos usados por frontend para habilitar o bloquear acciones admin.
+            Debe incluir al menos `ROLE_EMPLEADO` o `ROLE_ADMIN` segun la sesion.
+
+    EmpleadoCreateRequest:
+      type: object
+      required: [nombre, direccion, telefono, departamentoClave]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+        direccion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 100
+        departamentoClave:
+          type: string
+          pattern: '^D-[0-9]{4}$'
+
+    EmpleadoUpdateRequest:
+      type: object
+      required: [nombre, direccion, telefono, departamentoClave, version]
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+        direccion:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 100
+        departamentoClave:
+          type: string
+          pattern: '^D-[0-9]{4}$'
+        version:
+          type: integer
+          minimum: 0
+
+    EmpleadoResponse:
+      type: object
+      required: [clave, nombre, direccion, telefono, departamentoClave, version]
+      properties:
+        clave:
+          type: string
+          pattern: '^E-[0-9]{4,}$'
+        nombre:
+          type: string
+        direccion:
+          type: string
+        telefono:
+          type: string
+        departamentoClave:
+          type: string
+          pattern: '^D-[0-9]{4}$'
+        version:
+          type: integer
+          minimum: 0
+
+    EmpleadoPageResponse:
+      type: object
+      required: [content, page, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmpleadoResponse'
+        page:
+          type: integer
+          minimum: 0
+        size:
+          type: integer
+          minimum: 1
+        totalElements:
+          type: integer
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+
+    ApiError:
+      type: object
+      required: [timestamp, status, error, message]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        fieldErrors:
+          type: object
+          additionalProperties:
+            type: string
+
+  responses:
+    BadRequest:
+      description: Solicitud invalida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unauthorized:
+      description: Credenciales invalidas o sesion no valida
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Forbidden:
+      description: Operacion no autorizada para el rol autenticado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Conflict:
+      description: Conflicto de negocio o concurrencia
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'

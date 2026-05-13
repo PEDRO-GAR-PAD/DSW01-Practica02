@@ -1,0 +1,14 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="departamento-form" novalidate>
+  <label>
+    Nombre
+    <input type="text" formControlName="nombre" />
+  </label>
+  <small *ngIf="form.controls.nombre.touched && form.controls.nombre.invalid">
+    Nombre obligatorio (max 100).
+  </small>
+  <small *ngIf="fieldErrors?.['nombre']">{{ fieldErrors?.['nombre'] }}</small>
+
+  <button type="submit" [disabled]="loading">
+    {{ loading ? 'Procesando...' : submitLabel }}
+  </button>
+</form>

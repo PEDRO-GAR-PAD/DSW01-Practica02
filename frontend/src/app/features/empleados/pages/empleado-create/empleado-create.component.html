@@ -1,0 +1,27 @@
+<section class="empleado-create">
+  <header>
+    <h1>Nuevo empleado</h1>
+    <a routerLink="/app/empleados">Volver al listado</a>
+  </header>
+
+  <p
+    *ngIf="feedback"
+    class="feedback"
+    [class.feedback--error]="feedback.type === 'error'"
+    [class.feedback--warning]="feedback.type === 'warning'"
+    [class.feedback--info]="feedback.type === 'info'"
+    [class.feedback--success]="feedback.type === 'success'"
+  >
+    {{ feedback.message }}
+  </p>
+
+  <app-empleado-form
+    mode="create"
+    [loading]="loading"
+    [submitLabel]="'Crear empleado'"
+    [initialValue]="formState.draft"
+    [departamentoOptions]="departamentoOptions"
+    [fieldErrors]="feedback?.fieldErrors || null"
+    (submitted)="submit($event)"
+  ></app-empleado-form>
+</section>

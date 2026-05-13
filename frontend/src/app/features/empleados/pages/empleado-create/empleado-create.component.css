@@ -1,0 +1,50 @@
+.empleado-create {
+  background: #fff;
+  border: 1px solid #dce6f2;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+h1 {
+  margin: 0;
+  color: #1f3654;
+}
+
+header a {
+  color: #214a79;
+  text-decoration: none;
+}
+
+.feedback {
+  border-radius: 10px;
+  padding: 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
+.feedback--error {
+  background: #ffe8e5;
+  color: #8e2518;
+}
+
+.feedback--warning {
+  background: #fff3dd;
+  color: #7c5310;
+}
+
+.feedback--info {
+  background: #e8f3ff;
+  color: #124074;
+}
+
+.feedback--success {
+  background: #e7f7ec;
+  color: #156337;
+}

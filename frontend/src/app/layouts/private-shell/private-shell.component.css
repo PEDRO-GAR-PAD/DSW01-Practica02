@@ -1,0 +1,57 @@
+.private-shell {
+  min-height: 100vh;
+  background: #f3f7fd;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #14365f;
+  color: #fff;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.topbar p {
+  margin: 0.2rem 0 0;
+  opacity: 0.9;
+}
+
+.topbar button {
+  border: 1px solid #89a8ce;
+  background: transparent;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.8rem 1.5rem;
+  border-bottom: 1px solid #cfdded;
+  background: #fff;
+}
+
+.menu a {
+  color: #204066;
+  text-decoration: none;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+}
+
+.menu a.is-active {
+  background: #dce9f8;
+  font-weight: 700;
+}
+
+main {
+  padding: 1.2rem 1.5rem;
+}

@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "empleados")
@@ -22,6 +23,13 @@ public class Empleado {
     @Column(name = "telefono", nullable = false, length = 100)
     private String telefono;
 
+    @Column(name = "departamento_clave", nullable = true, length = 20)
+    private String departamentoClave;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
+
     public Empleado() {
     }
 
@@ -30,6 +38,7 @@ public class Empleado {
         this.nombre = nombre;
         this.direccion = direccion;
         this.telefono = telefono;
+        this.departamentoClave = null;
     }
 
     public String getClave() {
@@ -62,5 +71,21 @@ public class Empleado {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public String getDepartamentoClave() {
+        return departamentoClave;
+    }
+
+    public void setDepartamentoClave(String departamentoClave) {
+        this.departamentoClave = departamentoClave;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

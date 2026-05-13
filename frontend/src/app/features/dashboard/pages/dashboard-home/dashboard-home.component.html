@@ -1,0 +1,56 @@
+<section class="dashboard-home">
+  <header>
+    <div>
+      <h1>Mi perfil</h1>
+      <p>Resumen de la sesion autenticada</p>
+    </div>
+  </header>
+
+  <p
+    *ngIf="feedback"
+    class="feedback"
+    [class.feedback--error]="feedback.type === 'error'"
+    [class.feedback--warning]="feedback.type === 'warning'"
+    [class.feedback--info]="feedback.type === 'info'"
+    [class.feedback--success]="feedback.type === 'success'"
+  >
+    {{ feedback.message }}
+  </p>
+
+  <div *ngIf="loading; else profileTpl" class="loading">Cargando datos...</div>
+
+  <ng-template #profileTpl>
+    <article class="profile-card" *ngIf="session as currentSession">
+      <div class="profile-card__badge" *ngIf="currentSession.roles.length > 0">
+        {{ currentSession.roles.join(' · ') }}
+      </div>
+
+      <dl>
+        <div>
+          <dt>Nombre</dt>
+          <dd>{{ empleado?.nombre || currentSession.displayName }}</dd>
+        </div>
+        <div>
+          <dt>Correo principal</dt>
+          <dd>{{ currentSession.principalEmail }}</dd>
+        </div>
+        <div>
+          <dt>Clave de empleado</dt>
+          <dd>{{ currentSession.empleadoClave }}</dd>
+        </div>
+        <div>
+          <dt>Departamento asignado</dt>
+          <dd>{{ departmentLabel }}</dd>
+        </div>
+        <div *ngIf="empleado">
+          <dt>Direccion</dt>
+          <dd>{{ empleado.direccion }}</dd>
+        </div>
+        <div *ngIf="empleado">
+          <dt>Telefono</dt>
+          <dd>{{ empleado.telefono }}</dd>
+        </div>
+      </dl>
+    </article>
+  </ng-template>
+</section>
