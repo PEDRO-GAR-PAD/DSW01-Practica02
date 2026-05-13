@@ -4,13 +4,17 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 on:
-  push:
+  workflow_run:
+    workflows: ["01 - Unit Tests"]
+    types:
+      - completed
     branches: [main, develop]
 
 jobs:
   sonar:
     name: SonarQube Code Quality Analysis
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout
