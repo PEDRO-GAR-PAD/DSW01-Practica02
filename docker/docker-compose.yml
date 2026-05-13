@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "${DB_HOST_PORT:-5432}:5432"
+      - "${DB_HOST_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -31,10 +31,36 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/dsw01_practica02
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
-      APP_BASIC_USER: admin
+      APP_BASIC_USER: master
       APP_BASIC_PASSWORD: admin123
     ports:
       - "${APP_HOST_PORT:-8080}:8080"
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.compose
+    container_name: dsw01-frontend
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_started
+    expose:
+      - "4200"
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: dsw01-nginx
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - app
+    ports:
+      - "${NGINX_HOST_PORT:-80}:80"
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+    environment:
+      - TZ=UTC
 
 volumes:
   postgres_data:
