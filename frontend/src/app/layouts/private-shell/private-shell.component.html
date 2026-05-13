@@ -13,6 +13,13 @@
     <a *ngIf="isAdmin$ | async" routerLink="/app/empleados" routerLinkActive="is-active">
       Empleados
     </a>
+    <a
+      *ngIf="isAdmin$ | async"
+      routerLink="/app/departamentos"
+      routerLinkActive="is-active"
+    >
+      Departamentos
+    </a>
   </nav>
 
   <main>

@@ -32,6 +32,14 @@ export const routes: Routes = [
 					import('./features/empleados/empleados.routes').then(
 						(m) => m.EMPLEADOS_ROUTES
 					)
+			},
+			{
+				path: 'departamentos',
+				canActivate: [adminGuard],
+				loadChildren: () =>
+					import('./features/departamentos/departamentos.routes').then(
+						(m) => m.DEPARTAMENTOS_ROUTES
+					)
 			}
 		]
 	},

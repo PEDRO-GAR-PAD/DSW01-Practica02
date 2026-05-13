@@ -5,12 +5,92 @@
   padding: 1.25rem;
 }
 
+.dashboard-home header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .dashboard-home h1 {
   margin: 0;
   color: #1d3858;
 }
 
+.dashboard-home header p,
 .dashboard-home p {
   margin: 0.6rem 0 0;
   color: #4a607d;
+}
+
+.feedback {
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.feedback--error {
+  background: #ffe8e5;
+  color: #8e2518;
+}
+
+.feedback--warning {
+  background: #fff3dd;
+  color: #7c5310;
+}
+
+.feedback--info {
+  background: #e8f3ff;
+  color: #124074;
+}
+
+.feedback--success {
+  background: #e7f7ec;
+  color: #156337;
+}
+
+.loading {
+  color: #4a607d;
+}
+
+.profile-card {
+  border: 1px solid #dce6f2;
+  border-radius: 16px;
+  padding: 1rem;
+  background: linear-gradient(180deg, #fefefe 0%, #f7fbff 100%);
+}
+
+.profile-card__badge {
+  display: inline-flex;
+  background: #214a79;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.profile-card dl {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+}
+
+.profile-card dl div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.profile-card dt {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6a7f9c;
+}
+
+.profile-card dd {
+  margin: 0;
+  color: #1f3654;
+  font-weight: 600;
 }

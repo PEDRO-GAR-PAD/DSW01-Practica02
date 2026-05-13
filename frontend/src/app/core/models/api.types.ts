@@ -56,6 +56,14 @@ export interface DepartamentoResponse {
   nombre: string;
 }
 
+export interface DepartamentoCreateRequest {
+  nombre: string;
+}
+
+export interface DepartamentoUpdateRequest {
+  nombre: string;
+}
+
 export interface DepartamentoPageResponse {
   content: DepartamentoResponse[];
   page: number;

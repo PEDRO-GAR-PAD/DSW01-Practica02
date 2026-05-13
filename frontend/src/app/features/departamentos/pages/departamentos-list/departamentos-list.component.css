@@ -1,0 +1,142 @@
+.departamentos-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.departamentos-list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.departamentos-list h1 {
+  margin: 0;
+  color: #1d3858;
+}
+
+.departamentos-list p {
+  margin: 0.35rem 0 0;
+  color: #4a607d;
+}
+
+.btn-primary {
+  background: #214a79;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+}
+
+.feedback {
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.feedback--error {
+  background: #ffe8e5;
+  color: #8e2518;
+}
+
+.feedback--warning {
+  background: #fff3dd;
+  color: #7c5310;
+}
+
+.feedback--info {
+  background: #e8f3ff;
+  color: #124074;
+}
+
+.feedback--success {
+  background: #e7f7ec;
+  color: #156337;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #dce6f2;
+  border-radius: 12px;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.8rem 0.9rem;
+  border-bottom: 1px solid #e5eef7;
+  text-align: left;
+}
+
+th {
+  background: #f6f9fc;
+  color: #24415f;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.actions a,
+.actions button,
+.pagination button,
+.delete-dialog button {
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.actions a {
+  background: #e8f1ff;
+  color: #16447a;
+  text-decoration: none;
+}
+
+.actions button,
+.pagination button,
+.delete-dialog__actions button:last-child {
+  background: #214a79;
+  color: #fff;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loading {
+  color: #4a607d;
+}
+
+.delete-dialog {
+  border: 1px solid #cfdbe9;
+  border-radius: 12px;
+  padding: 1rem;
+  max-width: 420px;
+}
+
+.delete-dialog::backdrop {
+  background: rgba(14, 32, 54, 0.35);
+}
+
+.delete-dialog__actions {
+  display: flex;
+  justify-content: end;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.delete-dialog__actions button:first-child {
+  background: #edf3f9;
+  color: #18344f;
+}
